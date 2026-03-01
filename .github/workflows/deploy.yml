@@ -1,0 +1,42 @@
+name: Deploy to Synology NAS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t tampa-incidents:latest .
+
+      - name: Set up deployment directory
+        run: |
+          mkdir -p ${{ secrets.DEPLOY_PATH }}
+          cp deploy/docker-compose.yml ${{ secrets.DEPLOY_PATH }}/docker-compose.yml
+
+      - name: Stop existing container
+        run: |
+          docker stop tampa-incidents-map || true
+          docker rm tampa-incidents-map || true
+        continue-on-error: true
+
+      - name: Start container
+        run: docker-compose -f ${{ secrets.DEPLOY_PATH }}/docker-compose.yml up -d
+
+      - name: Wait for health check
+        run: |
+          echo "Waiting for service to be healthy..."
+          sleep 30
+          curl -f http://${{ secrets.NAS_IP }}:3001/api/stats || exit 1
+          echo "Service is healthy!"
+
+      - name: Clean up old images
+        run: docker image prune -f
+        continue-on-error: true
