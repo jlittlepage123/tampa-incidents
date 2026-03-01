@@ -1,6 +1,54 @@
 # Tampa Police Incidents Map
 
-A self-hosted web application that tracks Tampa Police Department dispatch calls, stores them historically, and displays them on an interactive map with filtering capabilities.
+A self-hosted public safety data pipeline and interactive map built from the Tampa Police Department's live dispatch feed.
+
+## At a Glance
+
+| Item | Details |
+|------|---------|
+| Problem | Tampa's public dispatch feed shows active calls, but does not provide a usable historical record. |
+| Solution | Poll the live JSON feed hourly, store incidents in SQLite, geocode addresses, and display them on a filterable map. |
+| Stack | Node.js, Express, SQLite, Leaflet, Docker, GitHub Actions, Cloudflare Tunnel |
+| Live Demo | <https://tampa-pulse.jlittlepage.com> |
+| Status | Live and publicly accessible |
+| Built With AI | Developed with Claude Code from an initial natural-language prompt, then refined through conversational iteration |
+
+## Why I Built This
+
+A family member was considering a move to South/West Tampa, and I wanted a better way to understand local incident patterns. The city publishes a live dispatch feed, but only for the current active window. I built this app to create the historical record that feed does not provide and make it easy to explore by date, incident type, and neighborhood grid.
+
+## What the App Does
+
+- Pulls Tampa Police Department dispatch data from the city's public JSON feed
+- Stores each incident in a local SQLite database to build historical records
+- Geocodes street addresses into map coordinates
+- Displays incidents on an interactive Leaflet map
+- Filters by incident type, date range, and grid number
+- Highlights selected neighborhood grids with color-coded pins
+
+## Architecture Overview
+
+```text
+City of Tampa JSON Feed
+          |
+          v
+ Hourly Fetch Scheduler ---> Geocoder (Nominatim)
+          |                        |
+          v                        v
+     SQLite Historical Store <-----
+          |
+          v
+ Express API + Static Frontend
+          |
+          v
+  Leaflet Map with Filters
+```
+
+## How AI Was Used
+
+This project was built using [Claude Code](https://claude.ai/claude-code) through the VS Code extension. I provided the problem, constraints, deployment goals, and security expectations; Claude generated the implementation and I iterated on the result through natural-language direction and review.
+
+The initial prompt is included later in this README. Full session transcripts were not retained.
 
 ## Project Intent
 
@@ -52,22 +100,6 @@ Clicking a pin shows:
 - Dispatch timestamp
 - Grid number with link to official grid map
 - Report number
-
-## Architecture
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                     Docker Container                         │
-├─────────────────────────────────────────────────────────────┤
-│  Scheduler (cron) ──► Feed Fetcher ──► Geocoder             │
-│         │                                                    │
-│         ▼                                                    │
-│  SQLite Database (historical storage)                        │
-│         │                                                    │
-│         ▼                                                    │
-│  Express Server ──► REST API + Static Files                  │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ## Dependencies
 
@@ -288,13 +320,15 @@ docker ps | grep 3000
 
 ## How This Was Made
 
-This entire application was built using [Claude Code](https://claude.ai/claude-code) (Anthropic's AI coding assistant) via the VS Code IDE extension.
+This application was developed with [Claude Code](https://claude.ai/claude-code) via the VS Code IDE extension. I defined the problem, requirements, deployment constraints, and security expectations, then iterated through natural-language review and refinement.
 
 **Initial prompt provided:**
 
 > I want to create a project here that will Pull information out of an RSS feed or a JSON feed, identify specific Grid information that is in the feed and pull that information to a local table. From what I can see the feed is updated somewhat regularly, maybe hourly, and I want to keep a historical table. Ideally I will want to have a map that is shown to me with a pin for each incident with filters to allow me to filter out the various "Description" fields and will have a filter enabling a date range (last X days, weeks, months and a date picker for a range). I would like each pin, when selected to open up a window (in the same browser) with the details. I also want to Have a different color pin for entries in very specific grid numbers.
 >
 > I will want this deployable to my NAS as an internal website to my network. I am in the process of setting up a Github self hosted runner as a container on the NAS to address pulls from my Github repo.
+
+**Conversation history note:** The initial prompt was preserved, but the full Claude session transcript was not retained.
 
 **Time to build:** ~41 minutes from initial prompt to fully functional application, including:
 
