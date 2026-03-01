@@ -13,7 +13,7 @@ services:
       - FETCH_INTERVAL_MINUTES=60
       # Zone configuration (comma-separated grid numbers) — uncomment to override defaults
       # - GRID_RED=152
-      # - GRID_YELLOW=120,136,151,153,157,158,159
+      - GRID_YELLOW=136,153,157,158,159
       # Map center — uncomment to override (defaults to Tampa Police Grid 152 centroid)
       # - MAP_CENTER_LAT=27.947281
       # - MAP_CENTER_LNG=-82.499440

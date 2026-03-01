@@ -117,7 +117,7 @@ Clicking a pin shows:
 - Two GitHub Actions secrets configured (see below)
 
 > **New to GitHub self-hosted runners?** Ask Claude or ChatGPT:
-> *"How do I set up a GitHub Actions self-hosted runner on [Linux server / Synology NAS / EC2 instance]?"*
+> *"How do I set up a GitHub Actions self-hosted runner on [Linux server / NAS / EC2 instance]?"*
 
 #### GitHub Actions Secrets
 
@@ -294,19 +294,21 @@ This entire application was built using [Claude Code](https://claude.ai/claude-c
 
 > I want to create a project here that will Pull information out of an RSS feed or a JSON feed, identify specific Grid information that is in the feed and pull that information to a local table. From what I can see the feed is updated somewhat regularly, maybe hourly, and I want to keep a historical table. Ideally I will want to have a map that is shown to me with a pin for each incident with filters to allow me to filter out the various "Description" fields and will have a filter enabling a date range (last X days, weeks, months and a date picker for a range). I would like each pin, when selected to open up a window (in the same browser) with the details. I also want to Have a different color pin for entries in very specific grid numbers.
 >
-> I will want this deployable to my Synology NAS as an internal website to my network. I am in the process of setting up a Github self hosted runner as a container on the NAS to address pulls from my Github repo.
+> I will want this deployable to my NAS as an internal website to my network. I am in the process of setting up a Github self hosted runner as a container on the NAS to address pulls from my Github repo.
 
 **Time to build:** ~41 minutes from initial prompt to fully functional application, including:
 
 - Architecture planning and approval
 - Backend (Express server, SQLite database, feed fetcher, geocoder, scheduler)
 - Frontend (interactive map with Leaflet, filtering UI, details panel)
-- Docker configuration for Synology NAS deployment
+- Docker configuration for self-hosted deployment
 - GitHub Actions workflow for CI/CD
 
 ## License
 
-Private use only. Tampa Police data is public but subject to [City of Tampa Terms and Conditions](https://www.tampa.gov/about-us/tampagov/conditions-and-use).
+MIT — see [LICENSE](LICENSE) for details.
+
+Tampa Police Department dispatch data accessed via the public feed is subject to the [City of Tampa Terms and Conditions](https://www.tampa.gov/about-us/tampagov/conditions-and-use).
 
 ## Error Log
 
@@ -314,7 +316,7 @@ Private use only. Tampa Police data is public but subject to [City of Tampa Term
 |------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 2026-01-23 | Docker build failed: `npm ci` requires `package-lock.json` which was not committed to the repo | Generated `package-lock.json` locally with `npm install` and committed to repo; also updated Dockerfile to use `--omit=dev` instead of deprecated `--only=production` flag   |
 | 2026-01-23 | Container failed to start: bind mount failed because `data` directory does not exist           | Added `mkdir -p data` step to GitHub Actions workflow before starting container                                                                                              |
-| 2026-01-23 | Bind mount still failing despite mkdir - Docker needs absolute path on Synology                | Changed docker-compose to use `DATA_PATH` env var with absolute `github.workspace` path; added debugging output                                                              |
+| 2026-01-23 | Bind mount still failing despite mkdir - Docker needs absolute path on NAS                     | Changed docker-compose to use `DATA_PATH` env var with absolute `github.workspace` path; added debugging output                                                              |
 | 2026-01-23 | Bind mount still failing - runner is containerized so host paths don't match runner paths      | Switched from bind mount to Docker named volume `tampa-incidents-data`; Docker manages storage location automatically                                                        |
 | 2026-01-23 | Health check failed: curl couldn't connect to localhost from within containerized runner       | Changed health check URL from `localhost:3001` to host IP; later resolved by switching to `127.0.0.1:3001` in the workflow                                                   |
 
