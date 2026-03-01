@@ -13,6 +13,8 @@ A self-hosted public safety data pipeline and interactive map built from the Tam
 | Status | Live and publicly accessible |
 | Built With AI | Developed with Claude Code from an initial natural-language prompt, then refined through conversational iteration |
 
+![Tampa Incidents interactive map](images/Tampa-pulse.png)
+
 ## Why I Built This
 
 A family member was considering a move to South/West Tampa, and I wanted a better way to understand local incident patterns. The city publishes a live dispatch feed, but only for the current active window. I built this app to create the historical record that feed does not provide and make it easy to explore by date, incident type, and neighborhood grid.
