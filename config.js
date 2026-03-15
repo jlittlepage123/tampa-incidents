@@ -7,7 +7,7 @@ module.exports = {
   // Override via env vars: GRID_RED and GRID_YELLOW (comma-separated grid numbers)
   gridColors: {
     red: (process.env.GRID_RED || '152').split(',').map(s => s.trim()),
-    yellow: (process.env.GRID_YELLOW || '120,136,151,153,157,158,159').split(',').map(s => s.trim()),
+    yellow: (process.env.GRID_YELLOW || '69,70,81,82,93,94,95,104,105,106,115,116,120,125,126,136,137,138,139,140,141,143,144,151,153,155,157,158,159,160,161,162').split(',').map(s => s.trim()),
     blue: []                                           // Default for all others
   },
 
