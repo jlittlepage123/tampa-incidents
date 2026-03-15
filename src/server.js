@@ -4,6 +4,7 @@ const config = require('../config');
 const db = require('./database');
 const scheduler = require('./scheduler');
 const { fetchAndStore } = require('./fetcher');
+const { processPendingGeocodes } = require('./geocoder');
 
 const app = express();
 
@@ -91,6 +92,18 @@ app.get('/api/stats', (req, res) => {
   } catch (error) {
     console.error('Error fetching stats:', error);
     res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// API: Trigger bulk geocoding of pending incidents
+app.post('/api/geocode', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 500;
+    const result = await processPendingGeocodes(limit);
+    res.json(result);
+  } catch (error) {
+    console.error('Error in manual geocode:', error);
+    res.status(500).json({ error: 'Failed to geocode' });
   }
 });
 
