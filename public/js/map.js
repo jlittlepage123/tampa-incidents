@@ -169,10 +169,6 @@ function buildQueryParams() {
     params.set('descriptions', Array.from(selectedDescriptions).join(','));
   }
 
-  // Always filter to configured grids only
-  const allGrids = [...config.gridColors.red, ...config.gridColors.yellow];
-  params.set('grids', allGrids.join(','));
-
   return params;
 }
 
@@ -181,18 +177,20 @@ function updateMap() {
   markersLayer.clearLayers();
 
   incidents.forEach(incident => {
-    if (incident.latitude && incident.longitude) {
-      const marker = createMarker(incident);
+    const lat = Number(incident.latitude);
+    const lng = Number(incident.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      const marker = createMarker({ ...incident, latitude: lat, longitude: lng });
       markersLayer.addLayer(marker);
     }
   });
 
   // Fit bounds if we have markers
   if (incidents.length > 0) {
-    const validIncidents = incidents.filter(i => i.latitude && i.longitude);
+    const validIncidents = incidents.filter(i => Number.isFinite(Number(i.latitude)) && Number.isFinite(Number(i.longitude)));
     if (validIncidents.length > 0) {
       const bounds = L.latLngBounds(
-        validIncidents.map(i => [i.latitude, i.longitude])
+        validIncidents.map(i => [Number(i.latitude), Number(i.longitude)])
       );
       map.fitBounds(bounds, { padding: [50, 50] });
     }
